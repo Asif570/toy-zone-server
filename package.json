@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570/issues"
+  },
+  "homepage": "https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570#readme"
+}
