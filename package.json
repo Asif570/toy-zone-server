@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570/issues"
   },
-  "homepage": "https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570#readme"
+  "homepage": "https://github.com/programming-hero-web-course-4/b7a11-toy-marketplace-server-side-Asif570#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.5.0",
+    "nodemon": "^2.0.22"
+  }
 }
