@@ -32,6 +32,20 @@ const DB = async () => {
     console.log("pinged");
 
     // creating apis
+    app.get("/catogery", async (_req, res) => {
+      const result1 = await catColl.find().toArray();
+      const alldata = await coll.find().toArray();
+      let result = {};
+      result1.map((item) => {
+        const ar1 = alldata.filter((data) => {
+          return data.catogery == item.name;
+        });
+
+        return (result = { ...result, [item.name]: ar1.length });
+      });
+
+      res.send(result);
+    });
     app.post("/pinblog", async (req, res) => {
       const { email, blog } = req.body;
       const hasUser = await pinedBlogsColl.findOne({ email: email });
@@ -105,20 +119,7 @@ const DB = async () => {
       });
       res.send(result);
     });
-    app.get("/catogery", async (_req, res) => {
-      const result1 = await catColl.find().toArray();
-      const alldata = await coll.find().toArray();
-      let result = {};
-      result1.map((item) => {
-        const ar1 = alldata.filter((data) => {
-          return data.catogery == item.name;
-        });
 
-        return (result = { ...result, [item.name]: ar1.length });
-      });
-
-      res.send(result);
-    });
     app.post("/addtoy", async (req, res) => {
       let {
         name,
