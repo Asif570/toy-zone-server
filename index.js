@@ -11,6 +11,7 @@ app.get("/", (_req, res) => {
 });
 const URI =
   "mongodb+srv://islamasif570:oyyrmAGeslwRU6X9@cluster0.zedao6i.mongodb.net/?retryWrites=true&w=majority";
+
 const client = new MongoClient(URI, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -58,12 +59,13 @@ const DB = async () => {
     app.get("/pinblog", async (req, res) => {
       const { auth } = req.headers;
       if (!auth) {
-        res.send({ data: "No data" });
+        res.json({ result: "No data" });
+
         return;
       }
       const ides = await pinedBlogsColl.findOne({ email: auth });
 
-      res.send(ides);
+      res.json({ result: ides });
     });
     app.get("/byseller", async (req, res) => {
       const sellers = await authColl.find().toArray();
@@ -74,7 +76,7 @@ const DB = async () => {
 
         return { [seller.userName]: data };
       });
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/adduser", async (req, res) => {
       const { auth, username } = req.headers;
@@ -87,16 +89,16 @@ const DB = async () => {
           email: auth,
           userName: username,
         });
-        res.status(200).send({ token: token });
+        res.json({ token: token });
       }
     });
     app.get("/users", async (_req, res) => {
       const result = await authColl.find().toArray();
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/galleryPhotos", async (_req, res) => {
       const result = await galleryPhotoColl.find().toArray();
-      res.send(result);
+      res.json({ result: result });
     });
     app.post("/addcatogery", async (req, res) => {
       const { name } = req.body;
@@ -104,7 +106,7 @@ const DB = async () => {
       const result = await catColl.insertOne({
         name: name,
       });
-      res.send(result);
+      res.json({ result: result });
     });
 
     app.post("/addtoy", async (req, res) => {
@@ -138,7 +140,7 @@ const DB = async () => {
         inStoke,
       });
 
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/mytoys", async (req, res) => {
       const { limit = 20, skip = 0 } = req.query;
@@ -151,7 +153,7 @@ const DB = async () => {
         .limit(parseInt(limit, 10))
         .skip(parseInt(skip, 10))
         .toArray();
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/toySearch", async (req, res) => {
       const { name } = req.query;
@@ -163,8 +165,8 @@ const DB = async () => {
           },
         })
         .toArray();
-      console.log(result);
-      res.send(result);
+
+      res.json({ result: result });
     });
     app.get("/toys", async (req, res) => {
       const {
@@ -189,12 +191,12 @@ const DB = async () => {
         .limit(parseInt(limit, 10))
         .skip(parseInt(skip, 10))
         .toArray();
-      res.send(result);
+      res.json({ result: result });
     });
 
     app.get("/toycount", async (_req, res) => {
       const result = await coll.find().toArray();
-      res.send({ result: result.length });
+      res.json({ result: result.length });
     });
 
     app.patch("/toy/:id", async (req, res) => {
@@ -205,17 +207,17 @@ const DB = async () => {
         { _id: new ObjectId(id) },
         { $set: data }
       );
-      res.send(result);
+      res.json({ result: result });
     });
     app.delete("/toy/:id", async (req, res) => {
       const id = req.params.id;
       const result = await coll.deleteOne({ _id: new ObjectId(id) });
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/toy/:id", async (req, res) => {
       const id = req.params.id;
       const result = await coll.findOne({ _id: new ObjectId(id) });
-      res.send(result);
+      res.json({ result: result });
     });
     app.get("/catogery", async (_req, res) => {
       const result1 = await catColl.find().toArray();
@@ -228,8 +230,7 @@ const DB = async () => {
 
         return (result = { ...result, [item.name]: ar1.length });
       });
-
-      res.send(result);
+      res.json({ result: result });
     });
   } catch (error) {
     console.log(error);
