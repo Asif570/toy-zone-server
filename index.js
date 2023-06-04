@@ -1,10 +1,11 @@
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
+const morgan = require("morgan");
 require("dotenv").config();
 const app = express();
 const jwt = require("jsonwebtoken");
-app.use(express.json(), cors());
+app.use([morgan("dev"), cors(), express.json()]);
 const PORT = process.env.PORT || 5000;
 app.get("/", (_req, res) => {
   res.send("server is running");
