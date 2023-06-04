@@ -65,7 +65,7 @@ const DB = async () => {
       }
       const ides = await pinedBlogsColl.findOne({ email: auth });
 
-      res.send().json({ result: ides });
+      res.json({ result: ides }).send();
     });
     app.get("/byseller", async (req, res) => {
       const sellers = await authColl.find().toArray();
@@ -76,7 +76,7 @@ const DB = async () => {
 
         return { [seller.userName]: data };
       });
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/adduser", async (req, res) => {
       const { auth, username } = req.headers;
@@ -89,16 +89,16 @@ const DB = async () => {
           email: auth,
           userName: username,
         });
-        res.send().json({ token: token });
+        res.json({ token: token }).send();
       }
     });
     app.get("/users", async (_req, res) => {
       const result = await authColl.find().toArray();
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/galleryPhotos", async (_req, res) => {
       const result = await galleryPhotoColl.find().toArray();
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.post("/addcatogery", async (req, res) => {
       const { name } = req.body;
@@ -106,7 +106,7 @@ const DB = async () => {
       const result = await catColl.insertOne({
         name: name,
       });
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
 
     app.post("/addtoy", async (req, res) => {
@@ -140,7 +140,7 @@ const DB = async () => {
         inStoke,
       });
 
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/mytoys", async (req, res) => {
       const { limit = 20, skip = 0 } = req.query;
@@ -153,7 +153,7 @@ const DB = async () => {
         .limit(parseInt(limit, 10))
         .skip(parseInt(skip, 10))
         .toArray();
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/toySearch", async (req, res) => {
       const { name } = req.query;
@@ -166,7 +166,7 @@ const DB = async () => {
         })
         .toArray();
 
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/toys", async (req, res) => {
       const {
@@ -191,12 +191,12 @@ const DB = async () => {
         .limit(parseInt(limit, 10))
         .skip(parseInt(skip, 10))
         .toArray();
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
 
     app.get("/toycount", async (_req, res) => {
       const result = await coll.find().toArray();
-      res.send().json({ result: result.length });
+      res.json({ result: result.length }).send();
     });
 
     app.patch("/toy/:id", async (req, res) => {
@@ -207,17 +207,17 @@ const DB = async () => {
         { _id: new ObjectId(id) },
         { $set: data }
       );
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.delete("/toy/:id", async (req, res) => {
       const id = req.params.id;
       const result = await coll.deleteOne({ _id: new ObjectId(id) });
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/toy/:id", async (req, res) => {
       const id = req.params.id;
       const result = await coll.findOne({ _id: new ObjectId(id) });
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
     app.get("/catogery", async (_req, res) => {
       const result1 = await catColl.find().toArray();
@@ -230,7 +230,7 @@ const DB = async () => {
 
         return (result = { ...result, [item.name]: ar1.length });
       });
-      res.send().json({ result: result });
+      res.json({ result: result }).send();
     });
   } catch (error) {
     console.log(error);
