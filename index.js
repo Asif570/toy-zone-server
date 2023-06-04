@@ -35,202 +35,266 @@ const DB = async () => {
     // creating apis
 
     app.post("/pinblog", async (req, res) => {
-      const { email, blog } = req.body;
-      const hasUser = await pinedBlogsColl.findOne({ email: email });
-      if (hasUser) {
-        await pinedBlogsColl.updateOne(
-          { email: email },
-          {
-            $set: {
-              blogs: blog,
-            },
-          }
-        );
-        res.send("200");
-        return;
-      }
+      try {
+        const { email, blog } = req.body;
+        const hasUser = await pinedBlogsColl.findOne({ email: email });
+        if (hasUser) {
+          await pinedBlogsColl.updateOne(
+            { email: email },
+            {
+              $set: {
+                blogs: blog,
+              },
+            }
+          );
+          res.send("200");
+          return;
+        }
 
-      await pinedBlogsColl.insertOne({
-        email: email,
-        blogs: blog,
-      });
-      res.send("201");
+        await pinedBlogsColl.insertOne({
+          email: email,
+          blogs: blog,
+        });
+        res.send("201");
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/pinblog", async (req, res) => {
-      const { auth } = req.headers;
-      if (!auth) {
-        res.json({ result: "No data" });
+      try {
+        const { auth } = req.headers;
+        if (!auth) {
+          res.json({ result: "No data" });
 
-        return;
+          return;
+        }
+        const ides = await pinedBlogsColl.findOne({ email: auth });
+
+        res.json({ result: ides }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
       }
-      const ides = await pinedBlogsColl.findOne({ email: auth });
-
-      res.json({ result: ides }).send();
     });
     app.get("/byseller", async (req, res) => {
-      const sellers = await authColl.find().toArray();
-      const allitems = await coll.find().toArray();
+      try {
+        const sellers = await authColl.find().toArray();
+        const allitems = await coll.find().toArray();
 
-      let result = sellers.map((seller) => {
-        const data = allitems.filter((item) => item.email == seller.email);
+        let result = sellers.map((seller) => {
+          const data = allitems.filter((item) => item.email == seller.email);
 
-        return { [seller.userName]: data };
-      });
-      res.json({ result: result }).send();
+          return { [seller.userName]: data };
+        });
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/adduser", async (req, res) => {
-      const { auth, username } = req.headers;
-      const token = jwt.sign({ email: auth }, process.env.JWT_SECKRET);
-      const result1 = await authColl.findOne({ email: auth });
-      if (result1) {
-        res.status(200).send({ token: token });
-      } else {
-        const result2 = await authColl.insertOne({
-          email: auth,
-          userName: username,
-        });
-        res.json({ token: token }).send();
+      try {
+        const { auth, username } = req.headers;
+        const token = jwt.sign({ email: auth }, process.env.JWT_SECKRET);
+        const result1 = await authColl.findOne({ email: auth });
+        if (result1) {
+          res.status(200).send({ token: token });
+        } else {
+          const result2 = await authColl.insertOne({
+            email: auth,
+            userName: username,
+          });
+          res.json({ token: token }).send();
+        }
+      } catch (error) {
+        res.json({ error: error }).send();
       }
     });
     app.get("/users", async (_req, res) => {
-      const result = await authColl.find().toArray();
-      res.json({ result: result }).send();
+      try {
+        const result = await authColl.find().toArray();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/galleryPhotos", async (_req, res) => {
-      const result = await galleryPhotoColl.find().toArray();
-      res.json({ result: result }).send();
+      try {
+        const result = await galleryPhotoColl.find().toArray();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.post("/addcatogery", async (req, res) => {
-      const { name } = req.body;
+      try {
+        const { name } = req.body;
 
-      const result = await catColl.insertOne({
-        name: name,
-      });
-      res.json({ result: result }).send();
+        const result = await catColl.insertOne({
+          name: name,
+        });
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
 
     app.post("/addtoy", async (req, res) => {
-      let {
-        name,
-        brand,
-        model,
-        color,
-        price,
-        image,
-        features,
-        catogery,
-        sellerName,
-        email,
-        sellerImage,
-        inStoke,
-      } = req.body;
-      price = parseInt(price);
-      const result = await coll.insertOne({
-        name,
-        brand,
-        model,
-        color,
-        price,
-        image,
-        features,
-        catogery,
-        sellerName,
-        email,
-        sellerImage,
-        inStoke,
-      });
+      try {
+        let {
+          name,
+          brand,
+          model,
+          color,
+          price,
+          image,
+          features,
+          catogery,
+          sellerName,
+          email,
+          sellerImage,
+          inStoke,
+        } = req.body;
+        price = parseInt(price);
+        const result = await coll.insertOne({
+          name,
+          brand,
+          model,
+          color,
+          price,
+          image,
+          features,
+          catogery,
+          sellerName,
+          email,
+          sellerImage,
+          inStoke,
+        });
 
-      res.json({ result: result }).send();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/mytoys", async (req, res) => {
-      const { limit = 20, skip = 0 } = req.query;
-      const { auth } = req.headers;
+      try {
+        const { limit = 20, skip = 0 } = req.query;
+        const { auth } = req.headers;
 
-      const result = await coll
-        .find({
-          email: { $regex: auth, $options: "i" },
-        })
-        .limit(parseInt(limit, 10))
-        .skip(parseInt(skip, 10))
-        .toArray();
-      res.json({ result: result }).send();
+        const result = await coll
+          .find({
+            email: { $regex: auth, $options: "i" },
+          })
+          .limit(parseInt(limit, 10))
+          .skip(parseInt(skip, 10))
+          .toArray();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/toySearch", async (req, res) => {
-      const { name } = req.query;
-      const result = await coll
-        .find({
-          name: {
-            $regex: name,
-            $options: "i",
-          },
-        })
-        .toArray();
+      try {
+        const { name } = req.query;
+        const result = await coll
+          .find({
+            name: {
+              $regex: name,
+              $options: "i",
+            },
+          })
+          .toArray();
 
-      res.json({ result: result }).send();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/toys", async (req, res) => {
-      const {
-        catogery = "",
-        color = "",
-        brand = "",
-        name = "",
-        limit = 5,
-        skip = 0,
-        min = 0,
-        max = 999,
-      } = req.query;
+      try {
+        const {
+          catogery = "",
+          color = "",
+          brand = "",
+          name = "",
+          limit = 5,
+          skip = 0,
+          min = 0,
+          max = 999,
+        } = req.query;
 
-      const result = await coll
-        .find({
-          catogery: { $regex: catogery, $options: "i" },
-          color: { $regex: color, $options: "i" },
-          brand: { $regex: brand, $options: "i" },
-          name: { $regex: name, $options: "i" },
-          price: { $gt: parseInt(min), $lt: parseInt(max) },
-        })
-        .limit(parseInt(limit, 10))
-        .skip(parseInt(skip, 10))
-        .toArray();
-      res.json({ result: result }).send();
+        const result = await coll
+          .find({
+            catogery: { $regex: catogery, $options: "i" },
+            color: { $regex: color, $options: "i" },
+            brand: { $regex: brand, $options: "i" },
+            name: { $regex: name, $options: "i" },
+            price: { $gt: parseInt(min), $lt: parseInt(max) },
+          })
+          .limit(parseInt(limit, 10))
+          .skip(parseInt(skip, 10))
+          .toArray();
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
 
     app.get("/toycount", async (_req, res) => {
-      const result = await coll.find().toArray();
-      res.json({ result: result.length }).send();
+      try {
+        const result = await coll.find().toArray();
+        res.json({ result: result.length }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
 
     app.patch("/toy/:id", async (req, res) => {
-      const id = req.params.id;
-      const data = req.body;
+      try {
+        const id = req.params.id;
+        const data = req.body;
 
-      const result = await coll.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: data }
-      );
-      res.json({ result: result }).send();
+        const result = await coll.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: data }
+        );
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.delete("/toy/:id", async (req, res) => {
-      const id = req.params.id;
-      const result = await coll.deleteOne({ _id: new ObjectId(id) });
-      res.json({ result: result }).send();
+      try {
+        const id = req.params.id;
+        const result = await coll.deleteOne({ _id: new ObjectId(id) });
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/toy/:id", async (req, res) => {
-      const id = req.params.id;
-      const result = await coll.findOne({ _id: new ObjectId(id) });
-      res.json({ result: result }).send();
+      try {
+        const id = req.params.id;
+        const result = await coll.findOne({ _id: new ObjectId(id) });
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
     app.get("/catogery", async (_req, res) => {
-      const result1 = await catColl.find().toArray();
-      const alldata = await coll.find().toArray();
-      let result = {};
-      result1.map((item) => {
-        const ar1 = alldata.filter((data) => {
-          return data.catogery == item.name;
-        });
+      try {
+        const result1 = await catColl.find().toArray();
+        const alldata = await coll.find().toArray();
+        let result = {};
+        result1.map((item) => {
+          const ar1 = alldata.filter((data) => {
+            return data.catogery == item.name;
+          });
 
-        return (result = { ...result, [item.name]: ar1.length });
-      });
-      res.json({ result: result }).send();
+          return (result = { ...result, [item.name]: ar1.length });
+        });
+        res.json({ result: result }).send();
+      } catch (error) {
+        res.json({ error: error }).send();
+      }
     });
   } catch (error) {
     console.log(error);
