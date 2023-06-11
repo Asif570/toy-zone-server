@@ -94,7 +94,9 @@ const DB = async () => {
     app.get("/adduser", async (req, res) => {
       try {
         const { auth, username } = req.headers;
-        const token = jwt.sign({ email: auth }, process.env.JWT_SECKRET);
+        const token = jwt.sign({ email: auth }, process.env.JWT_SECKRET, {
+          expiresIn: "1h",
+        });
         const result1 = await authColl.findOne({ email: auth });
         if (result1) {
           res.status(200).send({ token: token });
@@ -216,7 +218,7 @@ const DB = async () => {
           color = "",
           brand = "",
           name = "",
-          limit = 5,
+          limit = 6,
           skip = 0,
           min = 0,
           max = 999,
