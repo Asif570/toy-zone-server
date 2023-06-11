@@ -11,7 +11,7 @@ app.get("/", (_req, res) => {
   res.send("server is running");
 });
 const URI =
-  "mongodb+srv://islamasif570:oyyrmAGeslwRU6X9@cluster0.zedao6i.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://islamasif570:asem123@cluster0.zedao6i.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(URI, {
   serverApi: {
@@ -65,7 +65,7 @@ const DB = async () => {
       try {
         const { auth } = req.headers;
         if (!auth) {
-          res.json({ result: "No data" });
+          res.send({ result: "No data" });
 
           return;
         }
@@ -305,3 +305,4 @@ DB();
 app.listen(PORT, () => {
   console.log("Running");
 });
+module.exports = app;
